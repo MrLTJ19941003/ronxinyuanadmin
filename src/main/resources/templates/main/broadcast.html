@@ -1,0 +1,170 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>广播管理</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/dpl.css" rel="stylesheet">
+    <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/bui.css" rel="stylesheet">
+    <link href="/css/page-min.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+<div class="container">
+
+    <form id="searchForm" class="form-horizontal">
+        <div class="row">
+            <div class="control-group span8">
+                <label class="control-label">编号：</label>
+                <div class="controls">
+                    <input type="text" class="control-text" name="id">
+                </div>
+            </div>
+            <div class="control-group span8">
+                <label class="control-label">广播标题：</label>
+                <div class="controls">
+                    <input type="text" class="control-text" name="newsName">
+                </div>
+            </div>
+            <div class="control-group span7">
+                <label class="control-label">创建时间：</label>
+                <div class="controls">
+                    <input type="text" class=" calendar" name="newsTime">
+                </div>
+            </div>
+            <div class="span3 offset2">
+                <button  type="button" id="btnSearch" class="button button-primary">查询</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="search-grid-container">
+        <div id="grid"></div>
+    </div>
+</div>
+<script type="text/javascript" src="/jquery/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="/buiJs/bui.js"></script>
+<script type="text/javascript" src="/buiJs/config-min.js"></script>
+<script type="text/javascript">
+    BUI.use(['common/search','common/page'],function (Search) {
+
+
+
+        //enumObj = {"1":"男","0":"女"},
+        var columns = [
+                {title:'编号',dataIndex:'id',width:100,renderer:function(v){
+                    return Search.createLink({
+                        id : 'detail' + v,
+                        title : '广播列表',
+                        text : v,
+                        href : 'detail/example.html'
+                    });
+                }},
+                {title:'广播标题',dataIndex:'newsName',width:320},
+                {title:'广播链接',dataIndex:'newsUrl',width:350,renderer:BUI.Grid.Format.dateRenderer},
+                {title:'创建时间',dataIndex:'newsTime',width:120,renderer:BUI.Grid.Format.dateRenderer},
+                {title:'操作',dataIndex:'',width:200,renderer : function(value,obj){
+                    var editStr =  Search.createLink({ //链接使用 此方式
+                            id : 'edit' + obj.id,
+                            title : '编辑广播消息',
+                            text : '编辑',
+                            href : 'search/edit.html'
+                        }),
+                        delStr = '<span class="grid-command btn-del" title="删除新闻消息">删除</span>';//页面操作不需要使用Search.createLink
+                    return editStr + delStr;
+                }}
+            ],
+
+            store = Search.createStore('',{
+                autoLoad : false,
+                url : '/news/getDate',
+                pageSize : 10
+            }),
+            gridCfg = Search.createGridCfg(columns,{
+                tbar : {
+                    items : [
+                        {text : '<i class="icon-plus"></i>新建',btnCls : 'button button-small',handler:addFunction},
+                        {text : '<i class="icon-edit"></i>编辑',btnCls : 'button button-small',handler:editFunction},
+                        {text : '<i class="icon-remove"></i>删除',btnCls : 'button button-small',handler : delFunction}
+                    ]
+                },
+                plugins : [BUI.Grid.Plugins.CheckSelection] // 插件形式引入多选表格
+            });
+
+        var  search = new Search({
+                store : store,
+                gridCfg : gridCfg
+            }),
+            grid = search.get('grid');
+
+        //新增操作
+        function addFunction(){
+            top.topManager.openPage({
+                id:'broadcastAdd',
+                href:'/main/broadcastAdd',
+                title:'广播新增'//tag标题
+            });
+        }
+        //编辑操作
+        function editFunction(){
+            var selections = grid.getSelection();
+            var ids = [];
+            BUI.each(selections,function(item){
+                ids.push(item.id);
+            });
+            if(ids.length == 1){
+                top.topManager.openPage({
+                    id:'broadcastEdit',
+                    href:'/broadcast/query?id='+ids,
+                    title:'广播编辑'//tag标题
+                });
+            }else if(ids.length > 1){
+                BUI.Message.Alert('编辑只能选择一项，请重新选择！',function(){
+                },'info');
+            }else{
+                BUI.Message.Alert('未选中任何项！',function(){
+                },'info');
+            }
+        }
+        //删除操作
+        function delFunction(){
+            var selections = grid.getSelection();
+            delItems(selections);
+        }
+
+        function delItems(items){
+            var ids = [];
+            BUI.each(items,function(item){
+                ids.push(item.id);
+            });
+
+            if(ids.length){
+                BUI.Message.Confirm('确认要删除选中的记录么？',function(){
+                    $.ajax({
+                        url : '../data/del.php',
+                        dataType : 'json',
+                        data : {ids : ids},
+                        success : function(data){
+                            if(data.success){ //删除成功
+                                search.load();
+                            }else{ //删除失败
+                                BUI.Message.Alert('删除失败！');
+                            }
+                        }
+                    });
+                },'question');
+            }
+        }
+
+        //监听事件，删除一条记录
+        grid.on('cellclick',function(ev){
+            var sender = $(ev.domTarget); //点击的Dom
+            if(sender.hasClass('btn-del')){
+                var record = ev.record;
+                delItems([record]);
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>广播管理--编辑</title>
+    <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/dpl.css" rel="stylesheet">
+    <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/bui.css" rel="stylesheet">
+    <style>
+        #editor{
+            width: 654px;
+            height: 300px;
+            margin: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div style="height: 70px;">
+
+        </div>
+        <form id="J_Form" class="form-horizontal">
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label">广播标题：</label>
+                    <div class="controls">
+                        <input name="id" type="text" data-rules="{required:true}" data-messages="{required:'广播标题不能为空'}" class="input-normal control-text" data-tip="{text:'请输入广播标题'}">
+                    </div>
+                </div>
+                <div class="control-group span15">
+                    <label class="control-label">日期：</label>
+                    <div class="controls bui-form-group" data-rules="{dateRange : true}">
+                        <input name="start" data-tip="{text : '日期'}" data-rules="{required:true}" data-messages="{required:'日期不能为空'}" class="input-small calendar" type="text">
+
+                    </div>
+                </div>
+            </div>
+            <br/>
+            <br/>
+            <div class="row">
+                <div class="control-group span8">
+                    <label class="control-label">广播状态：</label>
+                    <div class="controls">
+                        <select name="type" class="input-normal">
+                            <option value="0">显示</option>
+                            <option value="1">隐藏</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+
+            <div class="row">
+                <div class="control-group span15">
+                    <label class="control-label">广播内容：</label>
+                </div>
+            </div>
+            <div id="editor">
+            </div>
+
+            <div class="row form-actions actions-bar">
+                <div class="span13 offset3 ">
+                    <button type="submit" class="button button-primary">保存</button>
+                    <button type="reset" class="button">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script type="text/javascript" src="/jquery/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="/buiJs/bui.js"></script>
+    <script src="http://g.alicdn.com/bui/seajs/2.3.0/sea.js"></script>
+    <script type="text/javascript" src="/buiJs/config-min.js"></script>
+    <script type="text/javascript" src="/js/wangEditor.min.js"></script>
+    <script type="text/javascript">
+        (function () {
+            BUI.use('bui/form',function(Form){
+                new Form.HForm({
+                    srcNode : '#J_Form',
+                    defaultChildCfg : {
+                        validEvent : 'blur' //移除时进行验证
+                    }
+                }).render();
+            });
+            var E = window.wangEditor;
+            var editor = new E('#editor');
+            editor.customConfig.menus = [
+                    'head',  // 标题
+                    'bold',  // 粗体
+                    'fontSize',  // 字号
+                    'fontName',  // 字体
+                    'italic',  // 斜体
+                    'underline',  // 下划线
+                    'strikeThrough',  // 删除线
+                    'foreColor',  // 文字颜色
+                    'backColor',  // 背景颜色
+                    'link',  // 插入链接
+                    'list',  // 列表
+                    'justify',  // 对齐方式
+                    'quote',  // 引用
+                    'emoticon',  // 表情
+                    'image',  // 插入图片
+                    'table',  // 表格
+                    'video',  // 插入视频
+                    'code',  // 插入代码
+                    'undo',  // 撤销
+                    'redo'  // 重复
+                ]
+            editor.customConfig.uploadImgShowBase64 = true;
+            editor.customConfig.uploadImgServer = '/upload';
+            editor.customConfig.showLinkImg = false;
+            // 或者 var editor = new E( document.getElementById('editor') )
+            editor.create();
+        }());
+    </script>
+</body>
+</html>
