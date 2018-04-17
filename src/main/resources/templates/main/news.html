@@ -47,29 +47,13 @@
 <script type="text/javascript">
     BUI.use(['common/search','common/page'],function (Search) {
 
-        //enumObj = {"1":"男","0":"女"},
-        var columns = [
-                {title:'编号',dataIndex:'id',width:100,renderer:function(v){
-                    return Search.createLink({
-                        id : 'detail' + v,
-                        title : '新闻列表',
-                        text : v,
-                        href : 'detail/example.html'
-                    });
-                }},
+        var enumObj = {"1":"隐藏","0":"显示"},
+        columns = [
+                {title:'编号',dataIndex:'id',width:100},
                 {title:'新闻标题',dataIndex:'newsName',width:320},
                 {title:'新闻链接',dataIndex:'newsUrl',width:350,renderer:BUI.Grid.Format.dateRenderer},
                 {title:'创建时间',dataIndex:'newsTime',width:120,renderer:BUI.Grid.Format.dateRenderer},
-                {title:'操作',dataIndex:'',width:200,renderer : function(value,obj){
-                    var editStr =  Search.createLink({ //链接使用 此方式
-                            id : 'edit' + obj.id,
-                            title : '编辑新闻消息',
-                            text : '编辑',
-                            href : 'search/edit.html'
-                        }),
-                        delStr = '<span class="grid-command btn-del" title="删除新闻消息">删除</span>';//页面操作不需要使用Search.createLink
-                    return editStr + delStr;
-                }}
+                {title:'状态',dataIndex:'newsStatus',width:90,renderer:BUI.Grid.Format.enumRenderer(enumObj)}
             ],
 
             store = Search.createStore('',{
@@ -80,8 +64,8 @@
             gridCfg = Search.createGridCfg(columns,{
                 tbar : {
                     items : [
-                        {text : '<i class="icon-plus"></i>新建',btnCls : 'button button-small',handler:function(){alert('新建');}},
-                        {text : '<i class="icon-edit"></i>编辑',btnCls : 'button button-small',handler:function(){alert('编辑');}},
+                        {text : '<i class="icon-plus"></i>新建',btnCls : 'button button-small',handler:addFunction},
+                        {text : '<i class="icon-edit"></i>编辑',btnCls : 'button button-small',handler:editFunction},
                         {text : '<i class="icon-remove"></i>删除',btnCls : 'button button-small',handler : delFunction}
                     ]
                 },
@@ -93,6 +77,36 @@
                 gridCfg : gridCfg
             }),
             grid = search.get('grid');
+
+        //新增操作
+        function addFunction(){
+            top.topManager.openPage({
+                id:'newsAdd',
+                href:'/main/newsAdd',
+                title:'新闻新增'//tag标题
+            });
+        }
+        //编辑操作
+        function editFunction(){
+            var selections = grid.getSelection();
+            var ids = [];
+            BUI.each(selections,function(item){
+                ids.push(item.id);
+            });
+            if(ids.length == 1){
+                top.topManager.openPage({
+                    id:'newsEdit',
+                    href:'/news/query?id='+ids,
+                    title:'广播编辑'//tag标题
+                });
+            }else if(ids.length > 1){
+                BUI.Message.Alert('编辑只能选择一项，请重新选择！',function(){
+                },'info');
+            }else{
+                BUI.Message.Alert('未选中任何项！',function(){
+                },'info');
+            }
+        }
         //删除操作
         function delFunction(){
             var selections = grid.getSelection();
@@ -108,7 +122,7 @@
             if(ids.length){
                 BUI.Message.Confirm('确认要删除选中的记录么？',function(){
                     $.ajax({
-                        url : '../data/del.php',
+                        url : '/news/delete',
                         dataType : 'json',
                         data : {ids : ids},
                         success : function(data){

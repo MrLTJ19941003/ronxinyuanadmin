@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <title>广播管理</title>
+    <title>产品管理</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/dpl.css" rel="stylesheet">
     <link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/bui.css" rel="stylesheet">
@@ -20,20 +20,27 @@
                 </div>
             </div>
             <div class="control-group span8">
-                <label class="control-label">广播标题：</label>
+                <label class="control-label">产品名称：</label>
                 <div class="controls">
-                    <input type="text" class="control-text" name="title">
+                    <input type="text" class="control-text" name="productName">
                 </div>
             </div>
             <div class="control-group span7">
                 <label class="control-label">创建时间：</label>
                 <div class="controls">
-                    <input type="text" class=" calendar" name="contentTime">
+                    <input type="text" class=" calendar" name="createTime">
                 </div>
             </div>
             <div class="span3 offset2">
                 <button  type="button" id="btnSearch" class="button button-primary">查询</button>
             </div>
+            <div class="control-group span8">
+                <label class="control-label">产品详情：</label>
+                <div class="controls">
+                    <input type="text" class="control-text" name="productDetails">
+                </div>
+            </div>
+
         </div>
     </form>
 
@@ -49,11 +56,12 @@
         var enumObj = {"1":"隐藏","0":"显示"},
         columns = [
                 {title:'编号',dataIndex:'id',width:100},
-                {title:'广播标题',dataIndex:'title',width:280},
-                {title:'广播链接',dataIndex:'url',width:250,renderer:BUI.Grid.Format.dateRenderer},
+                {title:'产品名称',dataIndex:'productName',width:280},
+                {title:'产品链接',dataIndex:'productUrl',width:250,renderer:BUI.Grid.Format.dateRenderer},
+                {title:'产品详情',dataIndex:'productDetails',width:250,renderer:BUI.Grid.Format.dateRenderer},
                 /*{title:'广播内容',dataIndex:'content',width:340,height:40},*/
-                {title:'创建时间',dataIndex:'createTime',width:120,renderer:BUI.Grid.Format.dateRenderer},
-                {title:'状态',dataIndex:'status',width:90,renderer:BUI.Grid.Format.enumRenderer(enumObj)}
+                {title:'创建时间',dataIndex:'productCreatetime',width:120,renderer:BUI.Grid.Format.dateRenderer},
+                {title:'状态',dataIndex:'productStatus',width:90,renderer:BUI.Grid.Format.enumRenderer(enumObj)}
                /* {title:'操作',dataIndex:'',width:200,renderer : function(value,obj){
                     var editStr =  Search.createLink({ //链接使用 此方式
                             id : 'edit' + obj.id,
@@ -68,7 +76,7 @@
 
             store = Search.createStore('',{
                 autoLoad : false,
-                url : '/broadcast/getDate',
+                url : '/product/getDate',
                 pageSize : 10
             }),
             gridCfg = Search.createGridCfg(columns,{
@@ -91,9 +99,9 @@
         //新增操作
         function addFunction(){
             top.topManager.openPage({
-                id:'broadcastAdd',
-                href:'/main/broadcastAdd',
-                title:'广播新增'//tag标题
+                id:'productAdd',
+                href:'/main/productAdd',
+                title:'产品新增'//tag标题
             });
         }
         //编辑操作
@@ -105,9 +113,9 @@
             });
             if(ids.length == 1){
                 top.topManager.openPage({
-                    id:'broadcastEdit',
-                    href:'/broadcast/query?id='+ids,
-                    title:'广播编辑'//tag标题
+                    id:'productEdit',
+                    href:'/product/query?id='+ids,
+                    title:'产品编辑'//tag标题
                 });
             }else if(ids.length > 1){
                 BUI.Message.Alert('编辑只能选择一项，请重新选择！',function(){

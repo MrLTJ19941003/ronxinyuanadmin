@@ -11,4 +11,15 @@ public class StringUtils {
         }
         return b;
     }
+
+    public static int MyparseInt(String string)throws Exception{
+        try{
+            return Integer.parseInt(string);
+        }catch (NumberFormatException e){
+            throw e;
+        }catch (NullPointerException e){
+            throw e;
+        }
+
+    }
 }

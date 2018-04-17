@@ -50,4 +50,30 @@ public class FileUploadServiceImpl implements FileUploadService{
         }
         return map;
     }
+
+    @Override
+    public Map uploadfile(MultipartFile file) {
+        Map map = new HashMap();
+        InputStream inputStream = null;
+
+        String[] strings = new String[1];
+        String[] imagStrs = new String[1];
+        InputStream[] inputStreams = new InputStream[1];
+        try {
+            for (int i =0 ;i<1;i++){
+                inputStreams[i] = file.getInputStream();
+                imagStrs[i]=file.getOriginalFilename();
+                strings[i] = imageServerUrl+file.getOriginalFilename();
+            }
+            boolean b = FtpFileUtil.uploadFile(imagStrs,inputStreams);
+            if(b){
+                map.put("url",strings);
+            }else{
+            }
+        } catch (IOException e) {
+            map.put("errno","1");
+            e.printStackTrace();
+        }
+        return map;
+    }
 }

@@ -24,4 +24,9 @@ public class FileUploadController {
     public Map uploadImages(@RequestParam(value="file") MultipartFile[] files){
         return fileUploadService.uploadImages(files);
     }
+
+    @RequestMapping("/file")
+    public Map uploadfile(@RequestParam(value="file") MultipartFile file){
+        return fileUploadService.uploadfile(file);
+    }
 }
