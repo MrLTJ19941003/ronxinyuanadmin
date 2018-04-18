@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,18 +13,22 @@
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 </head>
-<body>
-    <div class="container">
+<body style="background-image: url('/image/login_image.jpg');background-repeat:no-repeat;width: 100%;">
+    <div style="height: 270px;width: 100%;position: absolute;background-color: #eeeeee;opacity:0.5;z-index: -1;top:130px;">
+
+    </div>
+    <div class="container" style="z-index: 99;padding-top: 75px;padding-left: 666px;">
         <form class="form-signin" action="/login" method="post">
-            <h2 class="form-signin-heading">请登陆--后台管理</h2>
+            <h2 class="form-signin-heading">融鑫源</h2>
             <label for="username" class="sr-only">用户名</label>
-            <input type="email" id="username" name="username" class="form-control" placeholder="用户名" required autofocus>
+            <input type="text" id="username" name="username" class="form-control" placeholder="用户名" required autofocus>
             <label for="password" class="sr-only">密码</label>
             <input type="password" id="password" name="password" class="form-control" placeholder="密码" required>
             <div class="checkbox">
                 <label>
                     <input type="checkbox" value="记住用户名"> 记住用户名
                 </label>
+                <div th:text="${error}" style="color: red;text-align: center;"></div>
             </div>
             <button class="btn btn-lg btn-primary btn-block" type="submit">登陆</button>
         </form>

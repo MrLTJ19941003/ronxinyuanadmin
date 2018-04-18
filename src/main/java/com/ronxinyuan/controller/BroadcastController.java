@@ -61,7 +61,7 @@ public class BroadcastController {
     }
 
     /**
-     * 新增
+     * 删除
      */
     @RequestMapping(value = "/delete",method = RequestMethod.GET)
     @ResponseBody

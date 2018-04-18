@@ -9,6 +9,7 @@ import com.ronxinyuan.dao.ProductDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
@@ -123,12 +124,38 @@ public class ProductDaoImpl implements ProductDao {
 
     /**
      * 编辑
-     * @param content
+     * @param product
      * @return
      */
     @Override
-    public Map edit(Product content) {
-        return null;
+    public Map edit(Product product) {
+        Map map = new HashMap();
+        try{
+            jdbcTemplate.update(new PreparedStatementCreator(){
+                                    public PreparedStatement createPreparedStatement(Connection conn) throws SQLException {
+                                        String sql="UPDATE product SET product_name=?,product_content=?,product_imageurl=?,product_createtime=?,product_details=?,product_status=?,product_url=? where id=?";
+                                        PreparedStatement ps=conn.prepareStatement(sql);
+                                        ps.setString(1,product.getProductName());
+                                        ps.setString(2,product.getProductContent());
+                                        ps.setString(3,product.getProductImageurl());
+                                        ps.setString(4,product.getProductCreatetime());
+                                        ps.setString(5,product.getProductDetails());
+                                        ps.setInt(6,product.getProductStatus());
+                                        ps.setString(7,product.getProductUrl());
+                                        ps.setInt(8,product.getId());
+                                        return ps;
+                                    }
+                                }
+            );
+            map.put("status","true");
+        }catch (Exception e){
+            logger.error("出错，原因："+e);
+            e.printStackTrace();
+            map.put("status","false");
+            map.put("error",e);
+            return map;
+        }
+        return map;
     }
 
     /**
@@ -138,7 +165,33 @@ public class ProductDaoImpl implements ProductDao {
      */
     @Override
     public Map delete(int[] ids) {
-        return null;
+        Map map = new HashMap();
+        try{
+            List<Object[]> batchArgs=new ArrayList<Object[]>();
+            for(int i=0;i<ids.length;i++){
+                batchArgs.add(new Object[]{i+1,ids[i]});
+            }
+            String sql = "DELETE from product where id=?";
+            jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter(){
+                public void setValues(PreparedStatement ps, int i)
+                        throws SQLException {
+                    int id = ids[i];
+                    ps.setInt(1,id);
+                }
+                @Override
+                public int getBatchSize() {
+                    return ids.length;
+                }
+            });
+            map.put("status","true");
+        }catch (Exception e){
+            logger.error("出错，原因："+e);
+            e.printStackTrace();
+            map.put("status","false");
+            map.put("error",e);
+            return map;
+        }
+        return map;
     }
 
     /**
@@ -148,7 +201,10 @@ public class ProductDaoImpl implements ProductDao {
      */
     @Override
     public Product query(int id) {
-        return null;
+        String sql = "select id,product_name,product_content,product_createtime,product_details,product_imageurl,product_status,product_url from product where id=?";
+        Object[] args = new Object[] {id};
+        Object use = jdbcTemplate.queryForObject(sql, args,new ProductRowMapper());
+        return (Product)use;
     }
 
     /**

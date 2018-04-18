@@ -139,7 +139,7 @@
             if(ids.length){
                 BUI.Message.Confirm('确认要删除选中的记录么？',function(){
                     $.ajax({
-                        url : '/broadcast/delete',
+                        url : '/product/delete',
                         dataType : 'json',
                         data : {ids : ids},
                         success : function(data){

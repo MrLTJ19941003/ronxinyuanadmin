@@ -114,7 +114,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public Product query(int id) {
-        return null;
+        return productDao.query(id);
     }
 
     /**
@@ -124,7 +124,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public Map delete(int[] ids) {
-        return null;
+        return productDao.delete(ids);
     }
 
 }

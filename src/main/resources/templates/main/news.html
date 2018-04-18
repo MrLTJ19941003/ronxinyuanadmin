@@ -126,7 +126,7 @@
                         dataType : 'json',
                         data : {ids : ids},
                         success : function(data){
-                            if(data.success){ //删除成功
+                            if(data.status){ //删除成功
                                 search.load();
                             }else{ //删除失败
                                 BUI.Message.Alert('删除失败！');
